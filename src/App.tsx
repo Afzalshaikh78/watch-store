@@ -1,4 +1,4 @@
-import React from "react";
+
 import SideBar from "./components/SideBar";
 import { data } from "./db/data";
 import ProductCard from "./components/ProductCard";

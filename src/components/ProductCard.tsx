@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/store";
-import { FaChevronCircleDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {  FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 interface Product { 
   id: string;

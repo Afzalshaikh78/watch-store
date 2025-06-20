@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Navigation from "./Navigation";
 import { useFilterStore } from "../store/store";
 import { data } from "../db/data";
