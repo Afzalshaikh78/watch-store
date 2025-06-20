@@ -1,27 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import Navigation from "./Navigation";
 import { useFilterStore } from "../store/store";
-import { useState } from "react";
 import { data } from "../db/data";
 import { FiChevronDown, FiX } from "react-icons/fi";
 
-interface FilterState {
-  selectedCountries: string[];
-  selectedColors: string[];
-  selectedPriceRange: { min: number; max: number; label: string } | null;
-  setSelectedCountries: (countries: string[]) => void;
-  setSelectedColors: (colors: string[]) => void;
-  setSelectedPriceRange: (range: { min: number; max: number; label: string } | null) => void;
-  clearFilters: () => void;
-}
-
-
-
 const SideBar = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [countryDropdown, setCountryDropdown] = useState<boolean>(false);
-  const [colorDropdown, setColorDropdown] = useState<boolean>(false);
-  const [priceDropdown, setPriceDropdown] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [countryDropdown, setCountryDropdown] = useState(false);
+  const [colorDropdown, setColorDropdown] = useState(false);
+  const [priceDropdown, setPriceDropdown] = useState(false);
 
   const {
     selectedCountries,
@@ -31,10 +18,9 @@ const SideBar = () => {
     setSelectedColors,
     setSelectedPriceRange,
     clearFilters,
-  } = useFilterStore<FilterState>((state) => state);
+  } = useFilterStore((state) => state);
 
   const toggleSideBar = () => setIsOpen(!isOpen);
-
   const toggleCountryDropdown = () => setCountryDropdown(!countryDropdown);
   const toggleColorDropdown = () => setColorDropdown(!colorDropdown);
   const togglePriceDropdown = () => setPriceDropdown(!priceDropdown);
@@ -61,23 +47,18 @@ const SideBar = () => {
     setSelectedPriceRange(range);
   };
 
-  // Extract unique countries from the data
-  const uniqueCountries: string[] = Array.from(
-    new Set(data.map((item) => item.country))
-  );
+  const uniqueCountries = Array.from(new Set(data.map((item) => item.country)));
 
   return (
     <>
       <Navigation toggleSideBar={toggleSideBar} />
 
-      {/* SideBar */}
+      {/* Sidebar Panel */}
       <div
-        className={`fixed top-0 left-0 h-full w-80 bg-white
-         shadow-lg transform ${
-           isOpen ? "translate-x-0" : "-translate-x-full"
-         } transition-transform duration-300 ease-in-out z-50`}
+        className={`fixed top-0 left-0 h-full w-80 bg-white shadow-lg z-50 transition-transform duration-300 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
-        {/* Header with close button */}
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-lg font-semibold">Filters</h2>
           <button onClick={toggleSideBar} className="text-xl">
@@ -85,7 +66,7 @@ const SideBar = () => {
           </button>
         </div>
 
-        {/* Filters */}
+        {/* Filters Section */}
         <div className="p-4 space-y-6">
           {/* Country Filter */}
           <div>
@@ -95,16 +76,17 @@ const SideBar = () => {
             >
               <span className="font-medium">Country</span>
               <FiChevronDown
-                className={`transform ${countryDropdown ? "rotate-180" : ""}`}
+                className={`transition-transform ${
+                  countryDropdown ? "rotate-180" : ""
+                }`}
               />
             </button>
             {countryDropdown && (
               <div className="mt-2 space-y-2">
-                {uniqueCountries.map((country, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center"
-                    onClick={() => handleCountrySelection(country)}
+                {uniqueCountries.map((country) => (
+                  <label
+                    key={country}
+                    className="flex items-center cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -112,8 +94,8 @@ const SideBar = () => {
                       onChange={() => handleCountrySelection(country)}
                       className="mr-2"
                     />
-                    <span>{country}</span>
-                  </div>
+                    {country}
+                  </label>
                 ))}
               </div>
             )}
@@ -122,22 +104,22 @@ const SideBar = () => {
           {/* Color Filter */}
           <div>
             <button
-              className="flex justify-between items-center
-               w-full text-left"
+              className="flex justify-between items-center w-full text-left"
               onClick={toggleColorDropdown}
             >
               <span className="font-medium">Color</span>
               <FiChevronDown
-                className={`transform ${colorDropdown ? "rotate-180" : ""}`}
+                className={`transition-transform ${
+                  colorDropdown ? "rotate-180" : ""
+                }`}
               />
             </button>
             {colorDropdown && (
               <div className="mt-2 space-y-2">
                 {["black", "brown", "red", "white", "golden"].map((color) => (
-                  <div
+                  <label
                     key={color}
-                    className="flex items-center"
-                    onClick={() => handleColorSelection(color)}
+                    className="flex items-center cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -145,8 +127,8 @@ const SideBar = () => {
                       onChange={() => handleColorSelection(color)}
                       className="mr-2"
                     />
-                    <span>{color}</span>
-                  </div>
+                    {color}
+                  </label>
                 ))}
               </div>
             )}
@@ -155,13 +137,14 @@ const SideBar = () => {
           {/* Price Filter */}
           <div>
             <button
-              className="flex justify-between items-center 
-              w-full text-left"
+              className="flex justify-between items-center w-full text-left"
               onClick={togglePriceDropdown}
             >
               <span className="font-medium">Price</span>
               <FiChevronDown
-                className={`transform ${priceDropdown ? "rotate-180" : ""}`}
+                className={`transition-transform ${
+                  priceDropdown ? "rotate-180" : ""
+                }`}
               />
             </button>
             {priceDropdown && (
@@ -170,20 +153,20 @@ const SideBar = () => {
                   { label: "Below $300", min: 0, max: 300 },
                   { label: "$300 - $600", min: 300, max: 600 },
                   { label: "Above $600", min: 600, max: Infinity },
-                ].map((range) => (
-                  <div
+                ].map((range: { min: number; max: number; label: string }) => (
+                  <label
                     key={range.label}
-                    className="flex items-center"
-                    onClick={() => handlePriceRangeSelection(range)}
+                    className="flex items-center cursor-pointer"
                   >
                     <input
                       type="radio"
-                      checked={selectedPriceRange?.label === range.label}
+                      name="priceRange"
+                      checked={!!(selectedPriceRange && 'label' in selectedPriceRange && selectedPriceRange.label === range.label)}
                       onChange={() => handlePriceRangeSelection(range)}
                       className="mr-2"
                     />
-                    <span>{range.label}</span>
-                  </div>
+                    {range.label}
+                  </label>
                 ))}
               </div>
             )}
@@ -191,22 +174,22 @@ const SideBar = () => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t flex justify-between">
+        <div className="p-4 border-t">
           <button
             onClick={clearFilters}
-            className="bg-black text-white px-4 py-2 rounded"
+            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
           >
-            Clear all
+            Clear All
           </button>
         </div>
       </div>
 
-      {/* Background overlay */}
+      {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black opacity-50 z-40"
           onClick={toggleSideBar}
-        ></div>
+        />
       )}
     </>
   );
